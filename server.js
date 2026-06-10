@@ -113,11 +113,25 @@ async function handlePremiumPricing(req, res) {
 
   try {
     requestData = await readJsonBody(req);
-    responseData = {
-      application_id: requestData.application_id,
-      status: "premium_priced",
-      ...calculatePremium(requestData)
-    };
+    const eligibilityStatus = String(requestData.eligibility_status || "")
+      .trim()
+      .toLowerCase();
+
+    if (eligibilityStatus === "ineligible") {
+      statusCode = 422;
+      responseData = {
+        application_id: requestData.application_id,
+        status: "premium_blocked",
+        message: "Premium cannot be generated for ineligible applicants.",
+        eligibility_status: eligibilityStatus
+      };
+    } else {
+      responseData = {
+        application_id: requestData.application_id,
+        status: "premium_priced",
+        ...calculatePremium(requestData)
+      };
+    }
   } catch (error) {
     statusCode = error.message.includes("valid JSON") ? 400 : 500;
     responseData = {
