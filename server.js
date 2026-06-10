@@ -7,6 +7,7 @@ const PORT = Number(process.env.PORT || 4003);
 
 const API_LOG_FILE = path.join(__dirname, "api_logs");
 const THIRD_PARTY_LOG_FILE = path.join(__dirname, "third_party_api_logs");
+const VALID_ELIGIBILITY_STATUSES = new Set(["ineligible", "manual_review", "eligible"]);
 
 for (const filePath of [API_LOG_FILE, THIRD_PARTY_LOG_FILE]) {
   fs.closeSync(fs.openSync(filePath, "a"));
@@ -113,8 +114,8 @@ async function handlePremiumPricing(req, res) {
 
   try {
     requestData = await readJsonBody(req);
-    if (!requestData.eligibility_status || typeof requestData.eligibility_status !== "string") {
-      throw new Error("Not valid JSON. eligibility_status is required and must be a string.");
+    if (!requestData.eligibility_status || !VALID_ELIGIBILITY_STATUSES.has(String(requestData.eligibility_status))) {
+      throw new Error("Not valid JSON. eligibility_status is required and must be one of the required values.");
     }
     const eligibilityStatus = requestData.eligibility_status
       .trim()
