@@ -113,7 +113,10 @@ async function handlePremiumPricing(req, res) {
 
   try {
     requestData = await readJsonBody(req);
-    const eligibilityStatus = String(requestData.eligibility_status || "")
+    if (!requestData.eligibility_status || typeof requestData.eligibility_status !== "string") {
+      throw new Error("Not valid JSON. eligibility_status is required and must be a string.");
+    }
+    const eligibilityStatus = requestData.eligibility_status
       .trim()
       .toLowerCase();
 
