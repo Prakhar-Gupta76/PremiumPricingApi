@@ -118,8 +118,6 @@ async function handlePremiumPricing(req, res) {
       throw new Error("Not valid JSON. eligibility_status is required and must be one of the required values.");
     }
     const eligibilityStatus = requestData.eligibility_status
-      .trim()
-      .toLowerCase();
 
     if (eligibilityStatus === "ineligible") {
       statusCode = 422;
