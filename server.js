@@ -114,7 +114,7 @@ async function handlePremiumPricing(req, res) {
 
   try {
     requestData = await readJsonBody(req);
-    if (!requestData.eligibility_status || !typeof requestData.eligibility_status === "string" || !VALID_ELIGIBILITY_STATUSES.has(String(requestData.eligibility_status))) {
+    if (!requestData.eligibility_status || typeof requestData.eligibility_status !== "string" || !VALID_ELIGIBILITY_STATUSES.has(String(requestData.eligibility_status))) {
       throw new Error("Not valid JSON. eligibility_status is required and must be one of the required values.");
     }
     const eligibilityStatus = requestData.eligibility_status
